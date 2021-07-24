@@ -36,6 +36,19 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'meet' => 'required',
+            'hours' => 'required'
+        ]);
+
+        $order = new Order();
+        $order->client_id = $request->id;
+        $order->vaksin_name = 'Sinovac';
+        $order->meet = $request->meet;
+        $order->hours = $request->hours;
+        $order->save();
+
+        return redirect('profile')->with('success', 'Berhasil daftar vaksin sinovac');
     }
 
     /**

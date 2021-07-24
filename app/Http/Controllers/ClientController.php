@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -15,6 +16,11 @@ class ClientController extends Controller
     public function index()
     {
         //
+        $id = session()->get('user')['id'];
+        $client = Client::find($id);
+        $order = Order::where('client_id', $client->id)->get();
+
+        return view('profile', ['client' => $client, 'history' => $order]);
     }
 
     /**
@@ -70,6 +76,21 @@ class ClientController extends Controller
     public function update(Request $request, Client $client)
     {
         //
+        $request->validate([
+            'nik' => 'required',
+            'place_born' => 'required',
+            'date_born' => 'required',
+            'address' => 'required'
+        ]);
+
+        $client = $client->find($request->id);
+        $client->place_born = $request->place_born;
+        $client->date_born = $request->date_born;
+        $client->address = $request->address;
+        $client->nik = $request->nik;
+        $client->save();
+
+        return redirect('/profile')->with('success', 'berhasil mengubah data');
     }
 
     /**
